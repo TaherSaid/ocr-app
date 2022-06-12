@@ -1,6 +1,6 @@
 'use strict';
 import React, {Component} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 
 const PendingView = () => (
@@ -16,12 +16,20 @@ const PendingView = () => (
 );
 
 class TakeSnap extends Component {
+  state = {
+    flash: false,
+  };
+
   render() {
     return (
       <RNCamera
         style={styles.preview}
         type={RNCamera.Constants.Type.back}
-        flashMode={RNCamera.Constants.FlashMode.of}
+        flashMode={
+          this.state.flash
+            ? RNCamera.Constants.FlashMode.on
+            : RNCamera.Constants.FlashMode.off
+        }
         androidCameraPermissionOptions={{
           title: 'Permission to use camera',
           message: 'We need your permission to use your camera',
@@ -39,15 +47,47 @@ class TakeSnap extends Component {
           return (
             <View
               style={{
-                flex: 0,
-                flexDirection: 'row',
-                justifyContent: 'center',
+                flex: 1,
+                alignItems: 'flex-start',
+                flexDirection: 'column',
+                alignContent: 'flex-start',
+                width: '100%',
               }}>
-              <TouchableOpacity
-                onPress={() => this.takePicture(camera, this.props.seturl)}
-                style={styles.capture}>
-                <Text style={{fontSize: 14}}> SNAP </Text>
-              </TouchableOpacity>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'flex-start',
+                  flexDirection: 'column',
+                  alignContent: 'flex-start',
+                  width: '100%',
+                  paddingTop: 20,
+                }}>
+                <TouchableOpacity
+                  onPress={() => this.setState({flash: !this.state.flash})}
+                  style={styles.capture}>
+                  <Image
+                    style={styles.flashIcon}
+                    source={
+                      this.state.flash === true
+                        ? require('../assets/flashON.png')
+                        : require('../assets/flashOFF.png')
+                    }
+                  />
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  alignSelf: 'center',
+                }}>
+                <TouchableOpacity
+                  onPress={() => this.takePicture(camera, this.props.seturl)}
+                  style={styles.capture}>
+                  <Image
+                    style={styles.takeSnapIcon}
+                    source={require('../assets/circle.png')}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
           );
         }}
@@ -73,14 +113,23 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+  flashIcon: {
+    width: 40,
+    height: 40,
+    alignSelf: 'flex-end',
+  },
+  takeSnapIcon: {
+    width: 60,
+    height: 60,
+  },
   capture: {
     flex: 0,
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    padding: 15,
-    paddingHorizontal: 20,
-    alignSelf: 'center',
+    // borderRadius: 5,
+    // padding: 15,
+    // paddingHorizontal: 20,
+    // alignSelf: 'center',
     margin: 20,
+    alignSelf: 'flex-end',
   },
 });
 
