@@ -33,7 +33,11 @@ const ImagePicker = ({uri, route, navigation}) => {
 
       <View>
         {text
-          ? text.map((item, index) => <Text key={index}>{item}</Text>)
+          ? text.map((item, index) => (
+              <Text key={index} style={{fontSize: 20}}>
+                {item}
+              </Text>
+            ))
           : null}
       </View>
       <Pressable style={style.floatBtn}>
