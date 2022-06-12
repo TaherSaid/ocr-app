@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View, Pressable} from 'react-native';
+import {Text, View, Pressable} from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import TextRecognition from 'react-native-text-recognition';
 
