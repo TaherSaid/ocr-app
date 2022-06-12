@@ -1,7 +1,15 @@
 'use strict';
 import React, {Component} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  Alert,
+} from 'react-native';
 import {RNCamera} from 'react-native-camera';
+import InstructionModal from '../components/modal';
 
 const PendingView = () => (
   <View
@@ -16,8 +24,13 @@ const PendingView = () => (
 );
 
 class TakeSnap extends Component {
+  // operation value containe 0 or 1
+  // - "0" will refer for a visit card
+  // - "1" will refer for simple text
   state = {
     flash: false,
+    operation: null,
+    modalVisible: false,
   };
 
   render() {
@@ -74,13 +87,31 @@ class TakeSnap extends Component {
                     }
                   />
                 </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => this.setState({operation: 0})}
+                  style={styles.capture}>
+                  <Image
+                    style={styles.flashIcon}
+                    source={require('../assets/visiting-card.png')}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => this.setState({operation: 1})}
+                  style={styles.capture}>
+                  <Image
+                    style={styles.flashIcon}
+                    source={require('../assets/note.png')}
+                  />
+                </TouchableOpacity>
               </View>
               <View
                 style={{
                   alignSelf: 'center',
                 }}>
                 <TouchableOpacity
-                  onPress={() => this.takePicture(camera, this.props.seturl)}
+                  onPress={() =>
+                    this.takePicture(camera, this.props.navigation.navigate)
+                  }
                   style={styles.capture}>
                   <Image
                     style={styles.takeSnapIcon}
@@ -88,6 +119,12 @@ class TakeSnap extends Component {
                   />
                 </TouchableOpacity>
               </View>
+              <InstructionModal
+                modalVisible={this.state.modalVisible}
+                setModalVisible={newState =>
+                  this.setState({modalVisible: newState})
+                }
+              />
             </View>
           );
         }}
@@ -95,10 +132,16 @@ class TakeSnap extends Component {
     );
   }
 
-  takePicture = async function (camera, seturl) {
-    const options = {quality: 0.5, base64: true};
-    const data = await camera.takePictureAsync(options);
-    seturl(data.uri);
+  takePicture = async function (camera, navigation) {
+    if (this.state.operation != null) {
+      const options = {quality: 0.5, base64: true};
+      const data = await camera.takePictureAsync(options);
+      navigation('Image picker', {
+        uri: data.uri,
+      });
+    } else {
+      this.setState({modalVisible: true});
+    }
   };
 }
 
@@ -124,10 +167,6 @@ const styles = StyleSheet.create({
   },
   capture: {
     flex: 0,
-    // borderRadius: 5,
-    // padding: 15,
-    // paddingHorizontal: 20,
-    // alignSelf: 'center',
     margin: 20,
     alignSelf: 'flex-end',
   },
