@@ -8,6 +8,10 @@ import {
 } from 'react-native';
 import ImagePicker from './src/screens/imagePicker';
 import TakeSnap from './src/screens/takeSnap';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [uri, setUri] = useState('');
@@ -17,14 +21,12 @@ export default function App() {
     setUri(url);
   };
   return (
-    <View style={styles.container}>
-      <View style={styles.snap}>
-        <TakeSnap seturl={getUri} />
-      </View>
-      <View style={styles.displayText}>
-        <ImagePicker uri={uri} />
-      </View>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Take snap" component={TakeSnap} />
+        <Stack.Screen name="Image picker" component={ImagePicker} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 const styles = StyleSheet.create({
